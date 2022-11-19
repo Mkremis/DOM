@@ -1,0 +1,901 @@
+<!DOCTYPE html>
+<html lang="es" data-dark>
+<head>
+<meta charset="UTF-8">
+<meta name="description" content="Ejercicios DOM"/>
+<meta name="keywords" content="Ejercicios, DOM, JS"/>
+<title>EJERCICIOS DOM</title>
+<link href="Hoja_Estilos.css" rel="stylesheet">
+<link rel="shortcut icon" href="assets/buy-buying-color-svgrepo-com.svg" type="image/x-icon">
+</head>
+<body data-dark>
+<header data-dark class = "header" >
+	<h1>EJERCICIOS DEL DOM</h1>
+</header>
+	<aside class = "panel">
+		<nav class = "menu">
+		</nav>
+	</aside>
+<main>
+	<template id = "temp">
+		<section>
+			<a></a>
+		</section>
+	</template>
+</main>
+<button class="panel-btn hamburger hamburger--elastic" type="button">
+  <span class="hamburger-box">
+    <span class="hamburger-inner"></span>
+  </span>
+</button>
+<button class="scroll-top-btn hidden">&#11014</button>
+<button class = "dark-theme-btn dark-btn"></button>
+</body>
+
+<script>
+var x = 0, y = 0;// variables para seccion "Eventos Del Teclado"
+document.addEventListener("DOMContentLoaded", e =>{
+ crearContenido ();
+ hamburgerMenu(".panel-btn", ".panel", ".menu a");
+ digitalClock("#btnStart", "#btnStop", "#clock")
+ alarm ("assets/alarma.mp3", "#alarm_On", "#alarm_Off");
+ countdown("countdown", "Jan 01, 2023", "FELIZ AÑO NUEVO!!!");
+ scrollTopButton(".scroll-top-btn");
+ responsiveMedia();
+ Responsive_tester();
+ userAgent();
+ connection();
+ webCam();
+ getGeolocation();
+ searcher();
+ sorteoDigital();
+ sliderR();
+ scrollSpy();
+ videoInteligente();
+ ContactForm();
+ narrador();
+ });
+
+temaOscuro(".dark-theme-btn", "light-btn", "dark-mode");
+
+document.addEventListener("keydown", e =>{
+ shortCuts(e);
+ moveBall (e, ".ball", ".stage");})
+
+
+function  hamburgerMenu(panelBtn, panel, menuLink){
+ document.addEventListener("click", e => {
+ if (e.target.matches(panelBtn) || e.target.matches(`${panelBtn} *`)){ 
+  document.querySelector(panelBtn).classList.toggle("is-active");
+  document.querySelector(panel).classList.toggle("is-active");}
+ if (e.target.matches(menuLink)){ 
+  document.querySelector(panelBtn).classList.toggle("is-active");
+  document.querySelector(panel).classList.toggle("is-active");}
+});}
+
+function crearContenido (){
+	const $fragment = document.createDocumentFragment();
+	const $main = document.querySelector("main");
+	const $template = document.querySelector("#temp").content;
+        const $nav = document.querySelector("nav");
+        const $sections = [
+		{title: "Reloj"},
+		{title: "Eventos Del Teclado"},
+		{title: "Countdown",},
+		{title: "Responsive con JavaScript"},
+		{title: "Responsive Tester"},
+		{title: "Detección de Dispositivos"},
+		{title: "Detección de Conexion"},
+		{title: "Detección de WebCam"},
+		{title: "Geolocalización"},
+		{title: "Filtros de busqueda"},
+		{title: "Sorteo Digital"},
+		{title: "Responsive Slider"},
+		{title: "Video Inteligente"},
+		{title: "Formulario De Contacto"},
+		{title: "Narrador"},];
+	$sections.forEach(section =>{
+                $template.querySelector("section").id = section.title.split(" ").join("_");
+		$template.querySelector("section").classList.add("section");
+                $template.querySelector("section").setAttribute("data-scroll-spy","");
+		$template.querySelector("a").name = section.title;
+                $template.querySelector("a").classList.add("title-section");
+		$template.querySelector("a").textContent = section.title;
+		let $link = document.createElement("a");
+		$link.setAttribute("href", `#${section.title}`);
+                $link.setAttribute("data-scroll-spy","");
+		$link.textContent = section.title;
+		$nav.appendChild($link); 
+		
+		let $clone = document.importNode($template, true);
+		$fragment.appendChild($clone);});
+	        $main.appendChild($fragment);
+                reloj();
+		Eventos_Del_Teclado();
+   		cuentaRegresiva();
+					};
+
+function reloj(){
+	// tabla reloj:
+	const $reloj = document.getElementById("Reloj");
+	let tabla = document.createElement("table");
+ 	$reloj.appendChild(tabla);
+	let td = document.createElement("td");
+	td.setAttribute("colspan", "4");
+	tabla.appendChild(td);
+	td.id = "clock";
+	
+	//fila botones:
+	let $tr = document.createElement("tr");
+	tabla.appendChild($tr);
+	const botones = {
+	 btnStart: "Start",
+	 btnStop: "Stop",
+	 alarm_On: "Alarm On",
+	 alarm_Off: "Alarm Off"}
+         for (let boton in botones){
+	  let $btn = document.createElement("button");
+          $btn.id = boton;
+          $btn.textContent = `${botones[boton]}`;
+	  let $td = document.createElement("td");
+	  tabla.appendChild($td).appendChild($btn);};
+}
+
+
+
+
+function digitalClock (start, stop, clock){
+ let myInterval;
+ document.addEventListener("click", e =>{
+  if (e.target.matches(start)){
+   myInterval = setInterval(()=>{
+    let clockHour = new Date().toLocaleTimeString(); 
+    document.querySelector(clock).innerHTML = `<h3>${clockHour}</h3>`;
+    }, 1000);
+   e.target.disabled = true;}
+  if (e.target.matches(stop)){
+   clearInterval(myInterval);
+   document.querySelector(clock).innerHTML = null;
+   document.querySelector(start).disabled = false;}
+})//fin listener
+}//fin digitalClock ()
+
+function alarm (sound, alarm_On, alarm_Off){
+ let alarmTempo;
+ const $alarm = document.createElement("audio");
+ $alarm.src = sound;
+ document.addEventListener("click", e =>{
+  if (e.target.matches(alarm_On)){
+   alarmTempo = setTimeout(()=>{
+    $alarm.play();
+    }, 2000);
+   e.target.disabled = true;}
+  if (e.target.matches(alarm_Off)){
+   clearTimeout(alarmTempo);
+   $alarm.pause();
+   $alarm.currentTime = 0;
+   document.querySelector(alarm_On).disabled = false;}
+})//fin listener
+				}//fin digitalClock ()
+	
+
+function shortCuts(e){
+ if (e.key === "a" && e.altKey) alert (`haz lanzado una alerta con el teclado`);
+ if (e.key === "c" && e.altKey) confirm (`haz lanzado una confirmacion con el teclado`);
+ if (e.key === "p" && e.altKey) prompt (`haz lanzado un aviso con el teclado`);
+//console.log(e.type);
+//console.log(e.key);
+//console.log(e.keycode);
+//console.log(`ctrl: ${e.ctrlKey}`);
+//console.log(`alt: ${e.altKey}`);
+//console.log(`shift: ${e.shiftKey}`);
+			}
+
+function Eventos_Del_Teclado(){
+ const $article = document.createElement("article");
+ $article.id = "stage";
+ $article.classList.add("stage");
+ const $div = document.createElement("div");
+ $div.id = "ball";
+ $div.classList.add("ball");
+ const $section = document.querySelector("#Eventos_Del_Teclado a");
+ $section.after($article);
+ $article.appendChild($div);}
+
+function moveBall (event, ball, stage){
+ const $stage = document.querySelector(stage)
+ $ball = document.querySelector(ball),
+ limitsStage = $stage.getBoundingClientRect(),
+ limitsBall = $ball.getBoundingClientRect();
+
+switch(event.keyCode){
+// left:
+ case 37: 
+  event.preventDefault();
+  if (limitsBall.left > limitsStage.left) x--;
+  break;
+// top: 
+ case 38: 
+  event.preventDefault(); 
+ if (limitsBall.top > limitsStage.top) y--;
+  break; 
+// right:
+ case 39: 
+  event.preventDefault();
+  if (limitsBall.right < limitsStage.right) x++;
+  break;
+// bottom:
+ case 40: 
+  event.preventDefault();
+  if (limitsBall.bottom < limitsStage.bottom)y++;
+  break;
+ default: 
+ break;}
+
+ $ball.style.transform = `translate(${x*10}px, ${y*10}px`;
+ //console.log(x,y)
+ 			}    
+
+ function cuentaRegresiva(){
+  const $article = document.createElement("article");
+  $article.id = "countdown";
+  $article.classList.add("countdown");
+  const $section = document.querySelector("#Countdown a");
+  $section.after($article);}
+  
+ function countdown(id, limitDate, mensaje){
+  const $countdown = document.getElementById(id),
+  date = new Date(limitDate), 
+  dateTarget = date.getTime();
+  let today = new Date().getTime();
+  
+  myInterval = setInterval(()=>{
+    today = new Date().getTime();
+    let timeLap = dateTarget - today,
+    days = Math.floor(timeLap/(1000 * 60 * 60 * 24)),
+    hours = ("0" + Math.floor ((timeLap % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60))).slice(-2), 
+    minutes = ("0" + Math.floor ((timeLap % (1000 * 60 * 60)) / (1000 * 60))).slice(-2),
+    seconds = ("0" + Math.floor ((timeLap % (1000 * 60)) / 1000)).slice(-2);
+    
+    if (timeLap < 0){
+     $countdown.innerHTML  = `<h1>${mensaje}</h1>`;
+     clearInterval(myInterval);}
+    else{
+     $countdown.innerHTML  = `<h3>Faltan: ${days} días ${hours} horas ${minutes} minutos ${seconds} segundos</h3><br><br><small>${date}</small>`;}
+    }, 1000);
+				}// fin countdown()
+
+ function scrollTopButton(btn){
+ const $scrollBtn = document.querySelector(btn);
+ document.addEventListener("scroll", e =>{
+  let scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+  if (scrollTop > 400){
+   $scrollBtn.classList.remove("hidden");}
+  else {
+   $scrollBtn.classList.add("hidden");};});
+ document.addEventListener("click", e =>{
+  if(e.target.matches(btn)) window.scroll({ top: 0, behavior: 'smooth'});});
+}
+
+function temaOscuro(btn, light, darkMode){
+const $temaBtn = document.querySelector(btn);
+const $selectors = document.querySelectorAll("[data-dark]");
+
+const changeStyle = ()=>{
+ $temaBtn.classList.toggle(light);
+ $selectors.forEach(selector => selector.classList.toggle(darkMode)); 
+ if ($selectors[0].getAttribute("class") === "dark-mode"){
+  if(localStorage.getItem("theme") === null) localStorage.setItem("theme", "dark");}
+ else{ 
+  localStorage.removeItem("theme");}
+  			};
+
+document.addEventListener("click", e =>{
+  if (e.target.matches(btn)){
+   changeStyle(); };});
+
+document.addEventListener("DOMContentLoaded", e =>{
+ if(localStorage.getItem("theme") !== null) changeStyle();
+;});
+}// fin temaOscuro()
+
+
+function responsiveMedia(){
+ const $section = document.getElementById("Responsive_con_JavaScript");
+ let $div = document.createElement("div");
+ $section.appendChild($div).id = "gMaps";
+ $div = document.createElement("div");
+ $section.appendChild($div).id = "youTube";
+ const desktopContent = {
+  youTube : `<iframe width="560" height="315" src="https://www.youtube.com/embed/6IwUl-4pAzc" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>`,
+ gMaps : `<iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3284.016887889548!2d-58.38375908544157!3d-34.60373446500467!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x4aa9f0a6da5edb%3A0x11bead4e234e558b!2sObelisco!5e0!3m2!1ses-419!2sar!4v1654866280237!5m2!1ses-419!2sar" width="600" height="450" style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>`,};
+ const mobileContent = {
+  youTube : `<a href = "https://www.youtube.com/embed/6IwUl-4pAzc">Ver video</a>`,
+  gMaps : `<a href = "https://goo.gl/maps/AbaEBWvTY2pL3E8v8">Ver mapa</a>`,};
+
+ const medias = $section.querySelectorAll("div");
+  medias.forEach(divElem => mediaTest(divElem.id, "(min-width: 1024px)", desktopContent[divElem.id], mobileContent[divElem.id]));
+};
+
+ 
+function mediaTest(id, mq, desktopContent, mobileContent){
+ const breakpoint = matchMedia(mq);
+
+ const responsive = (e) =>{ 
+
+  if (e.matches) {
+   document.getElementById(id).innerHTML = desktopContent;
+  } else {
+   document.getElementById(id).innerHTML = mobileContent;
+  }
+};
+breakpoint.addListener(responsive);// ejecuta responsive cuando detecta cambios en la media
+responsive(breakpoint);// ejecuta responsive antes de detectar cambios en la media
+			};
+
+function Responsive_tester(){
+const $section = document.getElementById("Responsive_Tester");
+let form = document.createElement("form");
+form.id = "responsive-tester";
+let url = document.createElement("input");
+url.name = "direccion";
+url.type = "url";
+url.placeholder = "URL";
+url.setAttribute("required", "true");
+$section.appendChild(form);
+form.appendChild(url);
+let br = document.createElement("br");
+url.after(br);
+const textInput = ["ancho", "alto"];
+textInput.forEach(elem =>{
+ let input = document.createElement("input");
+ input.name = elem;
+ input.type = "text";
+ input.placeholder = elem;
+ input.setAttribute("required", "true");
+ form.appendChild(input);
+ let br = document.createElement("br");
+ input.after(br);
+ });
+const boton = {
+ probar: "submit", 
+ cerrar: "button",};
+for (let key in boton){
+let input = document.createElement("input");
+ input.name = key;
+ input.value = key;
+ input.type = boton[key];
+ form.appendChild(input);};
+rTester("responsive-tester");
+}
+ 
+function rTester(form){
+ const $form = document.getElementById(form);
+ let tester;
+ document.addEventListener("submit", e =>{
+  if (e.target === $form){
+   e.preventDefault();
+   tester = window.open(
+    $form.direccion.value,
+    "tester",
+    `innerWidth = ${$form.ancho.value},
+     innerHeight = ${$form.alto.value}`);}
+})
+  document.addEventListener("click", e =>{
+  if (e.target === $form.cerrar) tester.close();})
+};
+
+function userAgent(){
+ const $userDevice = document.createElement("div");
+ $userDevice.id = "user-device";
+ document.getElementById("Detección_de_Dispositivos").appendChild($userDevice);
+ userDeviceInfo("user-device");}
+
+function userDeviceInfo(id){
+  $id = document.getElementById(id),
+deviceInfo ={
+  isMobile : {
+    android:()=>navigator.userAgent.match(/android/i),
+    ios:()=>navigator.userAgent.match(/iphone|ipad|ipod/i),
+    windows:()=>navigator.userAgent.match(/windows phone/i),
+    any:function(){
+     return this.android()||this.ios()||this.windows();},},
+   isDesktop : {
+    linux:()=> navigator.userAgent.match(/linux/i),
+    mac:()=> navigator.userAgent.match(/mac os/i),
+    windows:()=> navigator.userAgent.match(/windows nt/i),
+    any: function(){
+     return this.linux()||this.mac()||this.windows();},},
+   isBrowser : {
+    chrome:()=>navigator.userAgent.match(/chrome/i),
+    safari:()=>navigator.userAgent.match(/safari/i),
+    firefox:()=>navigator.userAgent.match(/firefox/i),
+    opera:()=>navigator.userAgent.match(/opera|opera mini/i),
+    ie:()=>navigator.userAgent.match(/msie|iemobile/i),
+    edge:()=>navigator.userAgent.match(/edg/i),
+    any: function(){
+     return (
+      this.chrome()||
+      this.safari()||
+      this.firefox()||
+      this.opera()||
+      this.ie()||
+      this.edge())},},
+};
+ $id.innerHTML =`
+  <ul style = "list-style-type: none">
+   <li><b><u>User Agent:</u></b> ${navigator.userAgent}</li>
+   <li><b><u>Plataforma:</u></b> ${(deviceInfo.isMobile.any() ? deviceInfo.isMobile.any() : deviceInfo.isDesktop.any())}</li>
+   <li><b><u>Navegador:</u></b> ${deviceInfo.isBrowser.any()}</li>
+  </ul>`; 
+//alternativa: ${(deviceInfo.isBrowser.any()||deviceInfo.isMobile.any())}
+
+if (deviceInfo.isBrowser.chrome()) $id.innerHTML +=`<p><mark>Este contenido es exclusivo para Chrome</p></mark>`;
+if (deviceInfo.isBrowser.firefox()) $id.innerHTML +=`<p><mark>Este contenido es exclusivo para firefox</p></mark>`;   
+if (deviceInfo.isDesktop.windows()) $id.innerHTML +=`<p><mark>descarga nuestro software para windows</p></mark>`; 
+if (deviceInfo.isMobile.android()) $id.innerHTML +=`<p><mark>descarga nuestro software para Android</p></mark>`;
+if (deviceInfo.isMobile.ios()) $id.innerHTML +=`<p><mark>descarga nuestro software para IOS APPLE</p></mark>`;  
+if (deviceInfo.isMobile.android()) window.location.href = "https://www.youtube.com/watch?v=WHfyN411fd4&ab_channel=jonmircha";
+}
+
+function connection(){
+const isOnLine = ()=>{
+ const $div = document.createElement("div");
+ if (navigator.onLine){
+  $div.textContent = "Conexion Reestablecida";
+  $div.classList.add("online");
+  $div.classList.remove("offline");
+ }else{
+  $div.textContent = "Conexion Perdida";
+  $div.classList.add("offline");
+  $div.classList.remove("online");}
+
+document.body.insertAdjacentElement("afterbegin", $div);
+setTimeout(()=>document.body.removeChild($div),2000);
+}
+   
+window.addEventListener("online", ()=>isOnLine());
+window.addEventListener("offline", ()=>isOnLine());
+};
+
+function webCam(){
+const $div = document.createElement("div"),
+$video = document.createElement("video");
+$video.id = "webcam";
+$div.appendChild($video);
+document.querySelector("#Detección_de_WebCam a").after($div);
+//console.log(navigator.mediaDevices.getUserMedia);
+navigator.mediaDevices.getUserMedia({video : true, audio : true})
+.then(stream =>{
+  $video.srcObject = stream;
+  $video.play();})
+.catch(error =>$video.insertAdjacentHTML("beforebegin", `<p><mark>sucedio el siguiente error: <br>${error}</mark></p>`));
+}
+
+function getGeolocation(){
+const $div = document.createElement("div");
+$div.id = "geolocation";
+document.querySelector("#Geolocalización a").after($div);
+
+const options ={
+ enableHighAccuracy : true,
+ timeout : 5000,
+ maximumAge : 0,};
+const success = position =>{
+ $div.innerHTML = `
+<p><b>tu posición actual es:</b></p>
+<ul style = "list-style-type: none">
+<li><b><u>Latitud</u>:</b> ${position.coords.latitude}</li>
+<li><b><u>Longitud</u>:</b> ${position.coords.longitude}</li>
+<li><b><u>Precisión</u>:</b> ${position.coords.accuracy}</li></ul>
+<a href = "https://www.google.com/maps/@${position.coords.latitude},${position.coords.longitude},19z" target = "blank" rel = "noopener">Ver en Google Maps</a>`};
+const error = err =>$div.innerHTML = `<p><mark>Error ${err.code}: ${err.message}</mark></p>`;
+let geo = navigator.geolocation.getCurrentPosition(success, error, options);
+}
+
+function searcher(){
+const $div = document.createElement("div");
+$div.id = "buscador";
+const $search = document.createElement("input");
+$search.type = "search";
+$search.placeholder = "buscar...";
+$search.classList.add("card-filter");
+const $section = document.querySelector("#Filtros_de_busqueda");
+$section.appendChild($div);
+$div.appendChild($search);
+const $cards = document.createElement("article");
+$cards.classList.add("cards");
+$section.appendChild($cards);
+const $imagenes = [{
+ src : "https://placeimg.com/640/480/nature",
+ alt:  "Nature",
+ },{
+ src : "https://placeimg.com/640/480/arch",
+ alt:  "Architecture",
+ },{
+ src : "https://placeimg.com/640/480/animals",
+ alt:  "Animals",
+ },{
+ src : "https://placeimg.com/640/480/people",
+ alt:  "People",
+ },{
+ src : "https://placeimg.com/640/480/tech",
+ alt:  "Tech",
+ },{
+ src : "https://placeimg.com/640/480/any",
+ alt:  "Any",
+ }];
+
+$imagenes.forEach(elem =>{
+ const $figure = document.createElement("figure");
+ $figure.classList.add("card");
+ const $img = document.createElement("img");
+ $img.src = elem.src;
+ $img.alt = elem.alt;
+ const $figcap = document.createElement("figcaption");
+ $figcap.textContent = elem.alt;
+ $figure.appendChild($img);
+ $figure.appendChild($figcap);
+ $cards.appendChild($figure);});
+ searchFilters(".card-filter", ".card");
+}
+
+function searchFilters(input, selector){
+document.addEventListener("keyup", e =>{
+ if (e.target.matches(input)){
+  if (e.key === "Escape") e.target.value = "";
+  document.querySelectorAll(selector).forEach(el =>
+   el.textContent.toLowerCase().includes(e.target.value.toLowerCase())
+    ? el.classList.remove("filter")
+    : el.classList.add("filter"));};});
+}
+
+function sorteoDigital(){
+const $div = document.createElement("div");
+$div.id = "sorteo";
+document.querySelector("#Sorteo_Digital").appendChild($div);
+const $ul = document.createElement("ul");
+$ul.classList.add("players");
+$ul.setAttribute("style", "list-style-type: none");
+const lenguajes = ["JavaScript", "PHP", "JAVA", "C", "Python", "Ruby", "Go", "Visual Basic", "Rust", "Perl"];
+lenguajes.forEach(elem =>{
+ let $li = document.createElement("li");
+ $li.classList.add("player");
+ $li.textContent = elem;
+ $ul.appendChild($li);})
+$div.appendChild($ul);
+const $boton = document.createElement("button");
+$boton.id = "winner-btn";
+$boton.textContent = "Obtener Ganador";
+$div.appendChild($boton);
+draw("#winner-btn", ".player");
+}
+
+function draw(btn, selector){
+const getWinner = (selector)=>{
+ const $players = document.querySelectorAll(selector),
+ random = Math.floor(Math.random() * $players.length),
+ winner = $players[random];
+ return `el ganador es ${winner.textContent}`;
+ }
+document.addEventListener("click", e =>{
+ if (e.target.matches(btn)){
+  const result = getWinner(selector);
+  alert(result);}
+});
+}
+
+function sliderR(){
+const $div = [];
+const $section = document.querySelector("#Responsive_Slider")
+const $divs = [
+ {
+  class : "slider",
+  content: ""
+,},
+ { 
+  class : "slider-slides",
+  content: ""
+,},
+ { 
+  class : "slider-btns",
+  content: `<a id ="prev" href="#">&laquo;</a><a id ="next" href="#">&raquo;</a>`
+,},
+ {
+  class : "slider-slide active",
+  content: `<img src='https://placeimg.com/640/480/animals' alt='Animals'>`
+,},
+ {
+  class : "slider-slide",
+  content: `<h4>Diapositiva 2</h4><br><p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse tempus fermentum ex accumsan efficitur. Nulla eu dapibus massa. Pellentesque commodo commodo lorem vitae vehicula. Donec elementum, purus vel euismod placerat, ante massa placerat sapien, id aliquet lectus nibh quis nunc. Aenean eget lacinia magna. Fusce ultrices rutrum nibh sed tincidunt.</p>`
+,},
+{
+  class : "slider-slide", 
+  content : `<img src="https://placeimg.com/640/480/tech" alt="Tech">`
+,},
+ {
+  class : "slider-slide",
+  content: `<h4>Diapositiva 2</h4><br><p>Cras congue in odio in tincidunt. Sed feugiat et ligula eu laoreet. Nam eget tellus maximus, dapibus turpis quis, semper leo. Duis lacinia ipsum nec tortor tincidunt tempor. Nunc at porttitor purus. Morbi sit amet arcu id dolor rutrum lacinia ut vel tellus. Integer lacus purus, lobortis et quam in, dignissim tincidunt nisl.</p>`
+,},];
+
+ $divs.forEach((elem, index)=>{
+  $div[index]= document.createElement("div");
+  $div[index].classList = elem.class;
+  $div[index].innerHTML = elem.content;
+  if (index === 1 || index === 2) $div[0].appendChild($div[index]);
+  if (index > 2) $div[1].appendChild($div[index]);})
+ $section.appendChild($div[0]);
+ slider();
+}
+
+function slider(){
+ const $nextBtn = document.querySelector("#next"),
+ $prevBtn = document.querySelector("#prev"),
+ $slides = document.querySelectorAll(".slider-slide");
+ let i = 0;
+ 
+document.addEventListener("click", (e) =>{
+  if(e.target === $prevBtn){
+   e.preventDefault();
+   $slides[i].classList.remove("active");
+   i--;
+   if(i<0){
+    i = $slides.length -1;
+    }
+ $slides[i].classList.add("active");
+ }
+});
+document.addEventListener("click", (e) =>{
+  if(e.target === $nextBtn){
+   e.preventDefault();
+   $slides[i].classList.remove("active");
+   i++;
+   if(i >= $slides.length){
+    i = 0;
+    }
+ $slides[i].classList.add("active");
+ }
+});
+}
+
+function scrollSpy(){
+ const $sections = document.querySelectorAll("section[data-scroll-spy]");
+ const callback = (entries) =>{
+  entries.forEach(entry =>{
+   const id = entry.target.id.split("_").join(" ");
+   if(entry.isIntersecting){
+    document.querySelector(`a[data-scroll-spy][href="#${id}"]`).classList.add("active");
+   }else{
+    document.querySelector(`a[data-scroll-spy][href="#${id}"]`).classList.remove("active");
+   };
+ });};
+ const observer = new IntersectionObserver(callback,{threshold:[0.5, 0.75]});
+ $sections.forEach(el => observer.observe(el));
+}
+
+function videoInteligente(){
+const $section = document.querySelector("#Video_Inteligente"),
+$div = document.createElement("div");
+const $video = document.createElement("video");
+$video.id = "videoInt";
+$video.src = "assets/video.mp4";
+$video.setAttribute("data-smart-video", "");
+$video.muted = true;
+$video.loop = true;
+$video.controls = true;
+$div.appendChild($video);
+$section.appendChild($div);
+smartVideo();
+}
+
+
+function smartVideo(){
+$smartVideos = document.querySelectorAll("video[data-smart-video]");
+ const callback = (entries)=>{
+  entries.forEach(entry =>{ 
+   if (entry.isIntersecting){ 
+    entry.target.play();
+    document.addEventListener("visibilitychange", e => e.target.visibilityState === "visible" ?entry.target.play() :entry.target.pause());
+   }else{
+    entry.target.pause();
+  };
+ });
+};
+const observer = new IntersectionObserver(callback, {threshold: 0.5});
+$smartVideos.forEach(el => observer.observe(el));
+}
+
+
+function ContactForm(){
+const $section = document.getElementById("Formulario_De_Contacto"),
+$form = document.createElement("form");
+$form.classList.add("contact-form");
+$form.id = "contact-form";
+$form.action = "https://formsubmit.co/martinkremis@hotmail.com";
+$form.method = "POST";
+$legend = document.createElement("legend");
+$legend.textContent = "Envianos tus comentarios";
+$form.appendChild($legend);
+
+const fields = 
+[{
+ name : "name",
+ type: "text",
+ placeholder : "Escribe tu nombre",
+ title : "Nombre solo acepta letras y espacios en blanco",
+ pattern: "^[A-Za-zÑñÁáÉéÍíÓóÚúÜü\s]+$",
+},{
+ name : "email",
+ type: "email",
+ placeholder : "Escribe tu correo electronico",
+ title : "email no valido",
+ pattern: "^[a-z0-9]+(\.[_a-z0-9]+)*@[a-z0-9-]+(\.[a-z0-9-]+)*(\.[a-z]{2,15})$",
+},{
+ name : "subject",
+ type: "text",
+ placeholder : "Asunto a tratar",
+ title : "el asunto no puede estar vacio",
+ pattern : "^(\w+\S+)$",
+},];
+
+fields.forEach(field =>{
+ const $input = document.createElement("input");
+ $input.type = field.type;
+ $input.name = field.name;
+ $input.placeholder = field.placeholder;
+ $input.title = field.title;
+ if (field.name !== "subject") $input.pattern = field.pattern;
+ $input.required = true;
+ $input.classList.add("txtInput");
+ $form.appendChild($input);
+});
+
+/////////////////textarea////////////////////////
+const $txtarea = document.createElement("textarea");
+$txtarea.name = "comentarios";
+$txtarea.placeholder = "Escribe tus comentarios";
+$txtarea.title = "maximo permitido 256 caracteres";
+$txtarea.setAttribute("data-pattern","^.{1,255}$");
+$txtarea.cols = "50";
+$txtarea.rows = "5";
+$txtarea.required = true;
+$txtarea.classList.add("txtInput");
+$form.appendChild($txtarea);
+/////////////////submit////////////////////////
+const $submit = document.createElement("input");
+$submit.type = "submit";
+$submit.value = "Enviar";
+$form.appendChild($submit);
+$div = document.createElement("div");
+$div.appendChild($form);
+$section.appendChild($div);
+/////////////////loader////////////////////////
+$div = document.createElement("div");
+$div.classList.add("contact-form-loader", "none");
+const loader = document.createElement("img");
+loader.src = "assets/loader.svg";
+$div.appendChild(loader);
+$section.appendChild($div);
+/////////////////confirm////////////////////////
+$div = document.createElement("div");
+$div.classList.add("contact-form-response", "none");
+const $p = document.createElement("p");
+$p.textContent = "Los datos han sido enviados";
+$div.appendChild($p);
+$section.appendChild($div);
+contactFormValidations();
+/////////////////output////////////////////////
+const $output = document.createElement("output");
+$output.id = "output";
+$div = document.createElement("div");
+$div.appendChild($output);
+$section.appendChild($div);
+
+}
+
+function contactFormValidations(){
+const $form = document.querySelector(".contact-form"),
+ $inputs = document.querySelectorAll(".contact-form [required]");
+$inputs.forEach(input =>{
+const $span = document.createElement("span");
+$span.id = input.name;
+$span.classList.add("contact-form-error", "none");
+$span.textContent = input.title;
+input.insertAdjacentElement("afterend", $span);
+});
+document.addEventListener("keyup", e =>{
+if (e.target.matches(".contact-form [required]")){
+ let pattern = e.target.pattern || e.target.dataset.pattern;
+  if (pattern && e.target !== ""){
+   let regex = new RegExp(pattern);
+   return !regex.exec(e.target.value)
+    ? document.getElementById(e.target.name).classList.add("is-active")
+    : document.getElementById(e.target.name).classList.remove("is-active");
+  };
+  if (!pattern){
+   return e.target.value === ""
+    ? document.getElementById(e.target.name).classList.add("is-active")
+    : document.getElementById(e.target.name).classList.remove("is-active");
+  };
+};
+});
+
+ document.addEventListener("submit", e =>{
+  e.preventDefault();
+  const formData = new FormData(e.target),
+  formValues = Object.fromEntries(formData), 
+  $output = document.getElementById("output"),
+  $loader = document.querySelector(".contact-form-loader"),
+  $response = document.querySelector(".contact-form-response");
+  $loader.classList.remove("none");
+  setTimeout(()=>{
+   $response.classList.remove("none");
+   $loader.classList.add("none");
+   $form.reset();
+   setTimeout(()=>{
+    $response.classList.add("none");
+    for (const [key, value] of formData) {
+     $output.textContent += `${key}: ${value}\n`;
+     };
+    }, 2000);
+   }, 3000);
+});
+}
+
+
+function narrador(){
+const $section = document.getElementById("Narrador"),
+ $div = document.createElement("div"),
+ $select = document.createElement("select"),
+ $option_ini = document.createElement("option"),
+ $textarea = document.createElement("textarea"),
+ $boton = document.createElement("button");
+$select.id = "speech-select";
+$option_ini.textContent = "---Elige una voz---";
+$textarea.id = "speech-text";
+$textarea.cols = "50";
+$textarea.rows = "5";
+$textarea.placeholder = "Ingresa texto para leerlo...";
+$boton.id = "speech-btn";
+$boton.textContent = "Leer texto";
+$select.appendChild($option_ini);
+$div.appendChild($select);
+$select.after($textarea, $boton);
+$section.appendChild($div);
+speechReader();
+}
+
+
+
+function speechReader(select, textarea, btn){ 
+ const $select = document.getElementById("speech-select"),
+  $speechTextarea = document.getElementById("speech-text"),
+  $speechBtn = document.getElementById("speech-btn"),
+  speechMessage = new SpeechSynthesisUtterance();
+  let voices = [];
+  
+   speechSynthesis.addEventListener("voiceschanged", e=>{ 
+    voices = speechSynthesis.getVoices();
+    // console.log(voices);
+    voices.forEach(voice=>{ 
+     const $option = document.createElement("option");
+     $option.value = voice.name;
+     $option.textContent = `${voice.name}***${voice.lang}`;
+     $select.appendChild($option);
+    });
+   });
+
+  document.addEventListener("change", e=>{
+   if (e.target === $select)  speechMessage.voice = voices.find(voice=> voice.name === e.target.value);
+});
+  document.addEventListener("click", e=>{
+   if (e.target === $speechBtn){
+   speechMessage.text = $speechTextarea.value;
+   speechSynthesis.speak(speechMessage);
+   };
+});
+
+}
+</script>
+</html>
+
